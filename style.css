@@ -1,0 +1,18 @@
+@font-face {
+    font-family: nintendoFont;
+    src: url(Nintendo-DS-BIOS.ttf);
+}
+
+#logo {
+    font-family: nintendoFont;
+    color: #5584AC;
+    font-size: 70px;
+    text-align: center;
+}
+
+#welcome-message {
+    font-family: nintendoFont;
+    color: #5584AC;
+    font-size: 40px;
+    text-align: center;
+}
