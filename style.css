@@ -16,3 +16,66 @@
     font-size: 40px;
     text-align: center;
 }
+
+/* Chat container styling */
+#chat-container {
+    max-width: 600px;
+    margin: 20px auto;
+    border: 2px solid #5584AC;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f5f5f5;
+}
+
+#messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 400px;
+    overflow-y: auto;
+}
+
+#messages li {
+    padding: 10px 15px;
+    font-family: nintendoFont;
+}
+
+#messages li:nth-child(odd) {
+    background-color: #e0e8f0;
+}
+
+.system-message {
+    font-style: italic;
+    color: #888;
+    text-align: center;
+    background-color: #f0f0f0 !important;
+}
+
+#form {
+    display: flex;
+    padding: 10px;
+    background-color: #5584AC;
+}
+
+#input {
+    flex-grow: 1;
+    border: none;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    font-family: nintendoFont;
+}
+
+#form button {
+    background-color: #22577A;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: nintendoFont;
+}
+
+#form button:hover {
+    background-color: #38A3A5;
+}
