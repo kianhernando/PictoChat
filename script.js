@@ -5,15 +5,26 @@ const socket = io();
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const messages = document.getElementById('messages');
+const startBtn = document.getElementById('startBtn');
+
+let username = '';
 
 // Handle form submission
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (input.value) {
         // Emit chat message to server
-        socket.emit('chat message', input.value);
+        socket.emit('chat message', `[${username}] ${input.value}`);
         input.value = '';
     }
+});
+
+startBtn.addEventListener('click', function() {
+    const input = document.getElementById('username-input').value.trim();
+    if (input) {
+        username = input;
+        document.getElementById('input').placeholder = `${username}: Type a message...`;
+    } 
 });
 
 // Listen for chat messages from server
