@@ -1,6 +1,6 @@
 @font-face {
     font-family: nintendoFont;
-    src: url(Nintendo-DS-BIOS.ttf);
+    src: url(./assets/Nintendo-DS-BIOS.ttf);
 }
 
 #logo {
@@ -164,6 +164,12 @@
     margin: 2px;
     box-sizing: border-box;
     text-align: center;
+    transition: 0.3s;
+}
+
+.key:hover, .key.active {
+    background: lightgray;
+    cursor: pointer;
 }
 
 .row {

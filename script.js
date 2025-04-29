@@ -8,14 +8,30 @@ const messages = document.getElementById('messages');
 const startBtn = document.getElementById('startBtn');
 const keys = document.querySelectorAll('.key');
 const capsKey = document.querySelector('.caps');
+const sound = new Audio ('/assets/Klick.mp3');
 
 let username = '';
 let isCaps = false;
 let isShift = false;
 
+input.disabled = true;
+input.placeholder = 'Please enter your username first!';
+input.style.cursor = 'not-allowed';
+
+function setUsername(name) {
+    username = name;
+    input.disabled = false;
+    input.placeholder = 'Type a message...';
+    input.style.cursor = 'text';
+}
+
 // Handle form submission
 form.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (!username) {
+        alert('Please enter your username first!');
+        return;
+    }
     if (input.value) {
         // Emit chat message to server
         socket.emit('chat message', `[${username}] ${input.value}`);
@@ -27,7 +43,9 @@ startBtn.addEventListener('click', function() {
     const input = document.getElementById('username-input').value.trim();
     if (input) {
         username = input;
+        setUsername(input);
         document.getElementById('input').placeholder = `${username}: Type a message...`;
+        input.disabled = false;
     } 
 });
 
@@ -89,6 +107,52 @@ function updateKeysDisplay() {
             }
     });
 }
+
+// Automatically focus the input when page loads
+window.addEventListener("load", function() {   
+    input.focus();
+
+    document.addEventListener('keydown', (e) => {
+        if (e.target.matches('input, textarea')) {
+            sound.currentTime = 0;
+            sound.play();
+            
+            let key = e.key.toLowerCase();
+            let keyElement;
+            
+            // Handle special cases
+            switch(key) {
+                case ' ':
+                    keyElement = document.querySelector('.key.space');
+                    break;
+                case 'backspace':
+                    keyElement = document.querySelector('.key.back');
+                    break;
+                case 'enter':
+                    keyElement = document.querySelector('.key.enter');
+                    break;
+                case 'capslock':
+                    keyElement = document.querySelector('.key.caps');
+                    break;
+                case 'shift':
+                    keyElement = document.querySelector('.key.shift');
+                    break;
+                default:
+                    keyElement = document.querySelector(`.key[data-key="${e.key}"]`);
+                    if (!keyElement) {
+                        keyElement = document.querySelector(`.key[data-key="${e.key.toLowerCase()}"]`);
+                    }
+            }
+            
+            // Apply animation if we found a matching key
+            if (keyElement) {
+                keyElement.classList.add('active');
+                // Remove element after 100 milliseconds (simulating the 'click')
+                setTimeout(() => keyElement.classList.remove('active'), 100);
+            }
+        }
+    });
+});
 
 // Listen for chat messages from server
 socket.on('chat message', (msg) => {
