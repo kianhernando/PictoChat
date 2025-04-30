@@ -17,18 +17,32 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   
-  // Notify others that a user connected
-  socket.broadcast.emit('user connected');
-  
-  // Handle chat messages
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+  // Handle joining a room
+  socket.on('join room', (room) => {
+    // Notify previous room that user left
+    if (socket.room) {
+      socket.to(socket.room).emit('user disconnected', 'A user has left the chat');
+      socket.leave(socket.room);
+    }
+    
+    socket.room = room;
+    socket.join(room);
+    
+    // Notify new room that a user joined
+    socket.to(room).emit('user connected', `A user joined room ${room}`);
   });
   
-  // Handle disconnection
+  // Handle chat messages
+  socket.on('chat message', (chat) => {
+    // Send message only to users in the same room, using parameter
+    io.to(chat.room).emit('chat message', chat.message);
+  });
+  
   socket.on('disconnect', () => {
     console.log('user disconnected');
-    io.emit('user disconnected');
+    if (socket.room) {
+      socket.to(socket.room).emit('user disconnected', 'A user has left the chat');
+    }
   });
 });
 
