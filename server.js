@@ -3,14 +3,16 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+    maxHttpBufferSize: 1e8 // 100MB max buffer
+});
 
 // Serve static files from the current directory
 app.use(express.static('.'));
 
 // Serve the index.html file
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/index.html');
 });
 
 // Socket.io connection handling
@@ -48,6 +50,4 @@ io.on('connection', (socket) => {
 
 // Start the server
 const PORT = process.env.PORT || 8000;
-server.listen(PORT, () => {
-  console.log(`listening on *:${PORT}`);
-}); 
+server.listen(PORT, () => {}); 
