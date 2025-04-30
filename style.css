@@ -245,7 +245,8 @@
 
 #joinRoomBtn:hover {
     background-color: #38A3A5;
-  
+}
+
 /* Drawing pad styles */
 .sketchy {
     max-width: 600px;

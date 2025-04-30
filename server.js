@@ -39,6 +39,13 @@ io.on('connection', (socket) => {
     // Send message only to users in the same room, using parameter
     io.to(chat.room).emit('chat message', chat.message);
   });
+
+  // Handle drawing messages
+  socket.on('drawing message', (data) => {
+    if (socket.room) {
+      io.to(socket.room).emit('drawing message', data);
+    }
+  });
   
   socket.on('disconnect', () => {
     console.log('user disconnected');

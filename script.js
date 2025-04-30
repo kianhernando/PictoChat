@@ -81,7 +81,6 @@ form.addEventListener('submit', (e) => {
     if (input.value) {
         // Emit chat message to server with room information
         socket.emit('chat message', {
-
             room: currentRoom,
             message: `[${username}] ${input.value}`
         });
@@ -273,7 +272,7 @@ document.getElementById('joinRoomBtn').addEventListener('click', () => {
     if (newRoom) {
         joinRoom(newRoom);
         roomInput.value = '';
-=======
+    }
 });
 
 // Drawing event listeners
@@ -345,4 +344,5 @@ sendDrawingBtn.addEventListener('click', () => {
     } catch (error) {
         alert('Error sending drawing. Please try again.');
     }
+    
 });
