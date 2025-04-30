@@ -214,6 +214,38 @@
     text-align: center;
 }
 
+#room-selection {
+    text-align: center;
+    margin: 10px 0;
+    font-family: nintendoFont;
+}
+
+#room-selection label {
+    color: #5584AC;
+    margin-right: 5px;
+}
+
+#room-input {
+    padding: 7px;
+    margin-right: 10px;
+    border-radius: 5px;
+    font-family: nintendoFont;
+    font-size: 15px;
+}
+
+#joinRoomBtn {
+    font-family: nintendoFont;
+    padding: 7px;
+    font-size: 12px;
+    background-color: #22577A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#joinRoomBtn:hover {
+    background-color: #38A3A5;
+  
 /* Drawing pad styles */
 .sketchy {
     max-width: 600px;

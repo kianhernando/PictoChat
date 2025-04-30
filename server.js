@@ -17,33 +17,35 @@ app.get('/', (req, res) => {
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
-    // Notify others that a user connected
-    socket.broadcast.emit('user connected');
+  console.log('a user connected');
+  
+  // Handle joining a room
+  socket.on('join room', (room) => {
+    // Notify previous room that user left
+    if (socket.room) {
+      socket.to(socket.room).emit('user disconnected', 'A user has left the chat');
+      socket.leave(socket.room);
+    }
     
-    // Handle chat messages
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
-    });
-
-    // Handle drawing messages
-    socket.on('drawing message', (data) => {
-        try {
-            if (!data.drawing.startsWith('data:image')) {
-                return;
-            }
-            io.emit('drawing message', {
-                username: data.username,
-                drawing: data.drawing
-            });
-        } catch (error) {
-            // Error handling without logging
-        }
-    });
+    socket.room = room;
+    socket.join(room);
     
-    // Handle disconnection
-    socket.on('disconnect', () => {
-        io.emit('user disconnected');
-    });
+    // Notify new room that a user joined
+    socket.to(room).emit('user connected', `A user joined room ${room}`);
+  });
+  
+  // Handle chat messages
+  socket.on('chat message', (chat) => {
+    // Send message only to users in the same room, using parameter
+    io.to(chat.room).emit('chat message', chat.message);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+    if (socket.room) {
+      socket.to(socket.room).emit('user disconnected', 'A user has left the chat');
+    }
+  });
 });
 
 // Start the server

@@ -56,6 +56,9 @@ drawModeToggle.addEventListener('click', () => {
     drawingSection.style.display = isDrawMode ? 'block' : 'none';
 });
 
+// (Temporary) If not set by the user, set it to default
+let currentRoom = 'default';
+
 input.disabled = true;
 input.placeholder = 'Please enter your username first!';
 input.style.cursor = 'not-allowed';
@@ -65,6 +68,7 @@ function setUsername(name) {
     input.disabled = false;
     input.placeholder = 'Type a message...';
     input.style.cursor = 'text';
+    joinRoom('default');
 }
 
 // Handle form submission
@@ -75,8 +79,12 @@ form.addEventListener('submit', (e) => {
         return;
     }
     if (input.value) {
-        // Emit chat message to server
-        socket.emit('chat message', `[${username}] ${input.value}`);
+        // Emit chat message to server with room information
+        socket.emit('chat message', {
+
+            room: currentRoom,
+            message: `[${username}] ${input.value}`
+        });
         input.value = '';
     }
 });
@@ -121,6 +129,7 @@ keys.forEach(key => {
             }
             
             input.value += keyValue;
+            sound.play();
 
             // if shift was pressed, turn it off after typing once
             if (isShift) {
@@ -232,6 +241,7 @@ socket.on('user connected', () => {
     item.textContent = 'A user has joined the chat';
     item.className = 'system-message';
     messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
 });
 
 socket.on('user disconnected', () => {
@@ -239,6 +249,31 @@ socket.on('user disconnected', () => {
     item.textContent = 'A user has left the chat';
     item.className = 'system-message';
     messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+});
+
+// Add room joining functionality
+function joinRoom(roomName) {
+    currentRoom = roomName;
+    socket.emit('join room', roomName);
+    // Clear messages when joining new room
+    messages.innerHTML = '';
+    // Add room indicator message
+    const item = document.createElement('li');
+    item.textContent = `You joined room: ${roomName}`;
+    item.className = 'system-message';
+    messages.appendChild(item);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+// (Temporary) If someone puts a room name, override the name instead
+document.getElementById('joinRoomBtn').addEventListener('click', () => {
+    const roomInput = document.getElementById('room-input');
+    const newRoom = roomInput.value.trim();
+    if (newRoom) {
+        joinRoom(newRoom);
+        roomInput.value = '';
+=======
 });
 
 // Drawing event listeners
