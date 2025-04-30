@@ -9,10 +9,52 @@ const startBtn = document.getElementById('startBtn');
 const keys = document.querySelectorAll('.key');
 const capsKey = document.querySelector('.caps');
 const sound = new Audio ('/assets/Klick.mp3');
+const drawModeToggle = document.getElementById('draw-mode-toggle');
+const keyboardContainer = document.getElementById('keyboard-container');
+const drawingSection = document.querySelector('.drawing-section');
+const sendDrawingBtn = document.getElementById('send-drawing');
+const canvas = document.getElementById('canvas');
+// Set willReadFrequently to true for better performance
+const context = canvas.getContext('2d', { willReadFrequently: true });
+
+// Socket connection event handlers
+socket.on('connect', () => {});
+
+socket.on('connect_error', (error) => {});
+
+socket.on('disconnect', (reason) => {});
+
+// Test socket connection
+function testSocketConnection() {
+    socket.emit('chat message', '[System] Testing connection...', (error) => {});
+}
+
+// Call test immediately after connection
+socket.on('connect', testSocketConnection);
+
+// Test socket connection every 5 seconds if not connected
+setInterval(() => {
+    if (!socket.connected) {
+        socket.connect();
+    }
+}, 5000);
 
 let username = '';
 let isCaps = false;
 let isShift = false;
+let isDrawMode = false;
+let marker = "rgb(0,0,0)";
+let markerWidth = 1;
+let lastEvent;
+let mouseDown = false;
+
+// Mode switching functionality
+drawModeToggle.addEventListener('click', () => {
+    isDrawMode = !isDrawMode;
+    drawModeToggle.classList.toggle('active');
+    keyboardContainer.style.display = isDrawMode ? 'none' : 'flex';
+    drawingSection.style.display = isDrawMode ? 'block' : 'none';
+});
 
 input.disabled = true;
 input.placeholder = 'Please enter your username first!';
@@ -159,7 +201,29 @@ socket.on('chat message', (msg) => {
     const item = document.createElement('li');
     item.textContent = msg;
     messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
+    messages.scrollTop = messages.scrollHeight;
+});
+
+// Listen for drawing messages
+socket.on('drawing message', (data) => {
+    const item = document.createElement('li');
+    item.classList.add('drawing-message');
+    
+    // Add username
+    const usernameText = document.createElement('div');
+    usernameText.classList.add('username');
+    usernameText.textContent = `[${data.username}]`;
+    item.appendChild(usernameText);
+    
+    // Add drawing
+    const img = document.createElement('img');
+    img.src = data.drawing;
+    img.onload = () => {
+        messages.scrollTop = messages.scrollHeight;
+    };
+    item.appendChild(img);
+    
+    messages.appendChild(item);
 });
 
 // Optional: Display connection/disconnection notifications
@@ -175,4 +239,75 @@ socket.on('user disconnected', () => {
     item.textContent = 'A user has left the chat';
     item.className = 'system-message';
     messages.appendChild(item);
+});
+
+// Drawing event listeners
+canvas.addEventListener('mousedown', function(e) {
+    if (!isDrawMode) return;
+    lastEvent = e;
+    mouseDown = true;
+});
+
+canvas.addEventListener('mousemove', function(e) {
+    if (!isDrawMode || !mouseDown) return;
+    context.beginPath();
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    context.moveTo(lastEvent.clientX - rect.left, lastEvent.clientY - rect.top);
+    context.lineTo(x, y);
+    context.lineWidth = markerWidth;
+    context.strokeStyle = marker;
+    context.lineCap = 'round';
+    context.stroke();
+    lastEvent = e;
+});
+
+canvas.addEventListener('mouseup', function() {
+    mouseDown = false;
+});
+
+canvas.addEventListener('mouseleave', function() {
+    mouseDown = false;
+});
+
+// Change marker width
+document.getElementById('marker').addEventListener('change', function() {
+    markerWidth = this.value;
+});
+
+// Clear canvas
+document.getElementById('clear').addEventListener('click', function() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+// Send drawing functionality
+sendDrawingBtn.addEventListener('click', () => {
+    if (!username) {
+        alert('Please enter your username first!');
+        return;
+    }
+
+    try {
+        // Check if canvas is empty
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height).data;
+        const isEmpty = imageData.every(pixel => pixel === 0);
+        
+        if (isEmpty) {
+            alert('Please draw something before sending!');
+            return;
+        }
+        
+        // Convert canvas to image data and send
+        const drawingData = canvas.toDataURL('image/png');
+        socket.emit('drawing message', {
+            username: username,
+            drawing: drawingData
+        });
+        
+        // Clear canvas after sending
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    } catch (error) {
+        alert('Error sending drawing. Please try again.');
+    }
 });
