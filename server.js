@@ -4,7 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
-    maxHttpBufferSize: 1e8 // 100MB max buffer
+    maxHttpBufferSize: 1e8
 });
 
 // Serve static files from the current directory
@@ -19,34 +19,36 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   
-  // Handle joining a room
-  socket.on('join room', (room) => {
-    // Notify previous room that user left
-    if (socket.room) {
-      socket.to(socket.room).emit('user disconnected', 'A user has left the chat');
-      socket.leave(socket.room);
+  // Error handling in case of an error; not allowing rooms A, B, C or D
+  socket.on('joinRoom', (roomName) => {
+    if (!['A', 'B', 'C', 'D'].includes(roomName)) {
+      return;
     }
     
-    socket.room = room;
-    socket.join(room);
-    
-    // Notify new room that a user joined
-    socket.to(room).emit('user connected', `A user joined room ${room}`);
+    // Join the roomName as well as informing all users that someone joined
+    socket.room = roomName;
+    socket.join(roomName);
+    io.to(roomName).emit('user connected', 'A user has joined the chat');
   });
   
-  // Handle chat messages
-  socket.on('chat message', (chat) => {
-    // Send message only to users in the same room, using parameter
-    io.to(chat.room).emit('chat message', chat.message);
+  // Message emitter
+  socket.on('message', (data) => {
+    if (socket.room) {
+      io.to(socket.room).emit('message', {
+        sender: data.sender,
+        message: data.message
+      });
+    }
   });
 
-  // Handle drawing messages
+  // Drawing emitter
   socket.on('drawing message', (data) => {
     if (socket.room) {
       io.to(socket.room).emit('drawing message', data);
     }
   });
   
+  // Disconnect emitter
   socket.on('disconnect', () => {
     console.log('user disconnected');
     if (socket.room) {

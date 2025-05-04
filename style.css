@@ -445,3 +445,50 @@
     border-radius: 5px;
     margin-top: 5px;
 }
+
+/* Add these new styles */
+#landing-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#username-section {
+    margin-bottom: 30px;
+}
+
+#rooms-section h2 {
+    font-family: nintendoFont;
+    color: #5584AC;
+    margin-bottom: 20px;
+}
+
+#room-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.room-btn {
+    font-family: nintendoFont;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    background-color: #22577A;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.room-btn:hover:not(:disabled) {
+    background-color: #38A3A5;
+}
+
+.room-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}

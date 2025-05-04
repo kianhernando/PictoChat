@@ -14,14 +14,11 @@ const keyboardContainer = document.getElementById('keyboard-container');
 const drawingSection = document.querySelector('.drawing-section');
 const sendDrawingBtn = document.getElementById('send-drawing');
 const canvas = document.getElementById('canvas');
-// Set willReadFrequently to true for better performance
 const context = canvas.getContext('2d', { willReadFrequently: true });
 
 // Socket connection event handlers
 socket.on('connect', () => {});
-
 socket.on('connect_error', (error) => {});
-
 socket.on('disconnect', (reason) => {});
 
 // Test socket connection
@@ -56,49 +53,40 @@ drawModeToggle.addEventListener('click', () => {
     drawingSection.style.display = isDrawMode ? 'block' : 'none';
 });
 
-// (Temporary) If not set by the user, set it to default
-let currentRoom = 'default';
+// Get username and room from localStorage (set by index.html)
+const storedUsername = localStorage.getItem('username');
+const storedRoom = localStorage.getItem('room');
 
-input.disabled = true;
-input.placeholder = 'Please enter your username first!';
-input.style.cursor = 'not-allowed';
-
-function setUsername(name) {
-    username = name;
-    input.disabled = false;
-    input.placeholder = 'Type a message...';
-    input.style.cursor = 'text';
-    joinRoom('default');
+// If no stored username/room, redirect back to index
+if (!storedUsername || !storedRoom) {
+    window.location.href = '/';
 }
+
+// Set username and join room immediately
+username = storedUsername;
+currentRoom = storedRoom;
+socket.emit('joinRoom', storedRoom);
+
+// Remove all room selection related elements and code
+const roomSelection = document.getElementById('room-selection');
+if (roomSelection) roomSelection.remove();
+
+// Remove the startBtn event listener since we don't need it anymore
+if (startBtn) startBtn.remove();
 
 // Handle form submission
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (!username) {
-        alert('Please enter your username first!');
-        return;
-    }
     if (input.value) {
-        // Emit chat message to server with room information
-        socket.emit('chat message', {
-            room: currentRoom,
-            message: `[${username}] ${input.value}`
+        socket.emit('message', {
+            sender: username,
+            message: input.value
         });
         input.value = '';
     }
 });
 
-startBtn.addEventListener('click', function() {
-    const input = document.getElementById('username-input').value.trim();
-    if (input) {
-        username = input;
-        setUsername(input);
-        document.getElementById('input').placeholder = `${username}: Type a message...`;
-        input.disabled = false;
-    } 
-});
-
-// keyboard functionality
+// Keyboard functionality
 keys.forEach(key => {
     key.addEventListener('click', () => {
         const baseKey = key.getAttribute('data-key');
@@ -115,8 +103,8 @@ keys.forEach(key => {
             isCaps = !isCaps;
             updateKeysDisplay();
         } else {
-            // use key that visibly shows on button
-            //let keyValue = key.getAttribute('data-key');
+            // Use key that visibly shows on button
+            // Let keyValue = key.getAttribute('data-key');
             let keyValue = key.textContent;
             
             if (keyValue.length === 1 && /[a-zA-Z]/.test(keyValue)) {
@@ -130,7 +118,7 @@ keys.forEach(key => {
             input.value += keyValue;
             sound.play();
 
-            // if shift was pressed, turn it off after typing once
+            // If shift was pressed, turn it off after typing once
             if (isShift) {
                 isShift = false;
                 updateKeysDisplay();
@@ -149,7 +137,7 @@ function updateKeysDisplay() {
             !k.classList.contains('shift') &&
             !k.classList.contains('caps')) {
                 if (kBase.length === 1 && /[a-zA-Z]/.test(kBase)) {
-                    // display uppercase if caps or shift is active
+                    // Display uppercase if caps or shift is active
                     k.textContent = (isCaps || isShift) ? kBase.toUpperCase() : kBase.toLowerCase();
                 } else {
                     k.textContent = kBase;
@@ -197,7 +185,6 @@ window.addEventListener("load", function() {
             // Apply animation if we found a matching key
             if (keyElement) {
                 keyElement.classList.add('active');
-                // Remove element after 100 milliseconds (simulating the 'click')
                 setTimeout(() => keyElement.classList.remove('active'), 100);
             }
         }
@@ -205,9 +192,9 @@ window.addEventListener("load", function() {
 });
 
 // Listen for chat messages from server
-socket.on('chat message', (msg) => {
+socket.on('message', (data) => {
     const item = document.createElement('li');
-    item.textContent = msg;
+    item.textContent = `[${data.sender}] ${data.message}`;
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
 });
@@ -249,30 +236,6 @@ socket.on('user disconnected', () => {
     item.className = 'system-message';
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
-});
-
-// Add room joining functionality
-function joinRoom(roomName) {
-    currentRoom = roomName;
-    socket.emit('join room', roomName);
-    // Clear messages when joining new room
-    messages.innerHTML = '';
-    // Add room indicator message
-    const item = document.createElement('li');
-    item.textContent = `You joined room: ${roomName}`;
-    item.className = 'system-message';
-    messages.appendChild(item);
-    messages.scrollTop = messages.scrollHeight;
-}
-
-// (Temporary) If someone puts a room name, override the name instead
-document.getElementById('joinRoomBtn').addEventListener('click', () => {
-    const roomInput = document.getElementById('room-input');
-    const newRoom = roomInput.value.trim();
-    if (newRoom) {
-        joinRoom(newRoom);
-        roomInput.value = '';
-    }
 });
 
 // Drawing event listeners
