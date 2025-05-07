@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +8,17 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
+
 <body>
     <h1 id="logo">PICTOCHAT</h1>
     <p id="welcome-message">
-    This project is a real-time chat application inspired by Nintendo DS's PictoChat.
+        This project is a real-time chat application inspired by Nintendo DS's PictoChat.
     </p>
 
     <div id="chat-container">
         <ul id="messages"></ul>
         <form id="form" action="">
-            <input id="input" autocomplete="off" placeholder="Type a message..."/>
+            <input id="input" autocomplete="off" placeholder="Type a message..." />
             <button>Send</button>
         </form>
     </div>
@@ -100,8 +102,12 @@
                 <div id="shape"></div>
             </div>
             <div class="drawing-buttons">
+                <button id="eraser" title="Eraser">
+                    <img id="eraser-icon" src="assets/eraser.png" alt="Eraser" style="height:24px;width:24px;">
+                </button>
                 <button id="clear">Clear Drawing</button>
                 <button id="send-drawing">Send Drawing</button>
+                </button>
             </div>
         </div>
     </div>
@@ -109,4 +115,5 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

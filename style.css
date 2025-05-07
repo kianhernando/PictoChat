@@ -84,6 +84,7 @@
 #messages li.drawing-message {
     position: relative;
     text-align: left;
+    background: #fff;
 }
 
 #messages li.drawing-message img {
@@ -491,4 +492,20 @@
 .room-btn:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+#eraser img {
+  vertical-align: middle;
+  pointer-events: none; /* So only the button, not the image, handles clicks */
+}
+#eraser {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+#eraser:hover, #eraser.active {
+  background: #e0e8f0;
 }

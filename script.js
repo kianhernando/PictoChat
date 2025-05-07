@@ -15,6 +15,8 @@ const drawingSection = document.querySelector('.drawing-section');
 const sendDrawingBtn = document.getElementById('send-drawing');
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d', { willReadFrequently: true });
+const eraserBtn = document.getElementById('eraser');
+const eraserIcon = document.getElementById('eraser-icon');
 
 // Socket connection event handlers
 socket.on('connect', () => {});
@@ -44,6 +46,7 @@ let marker = "rgb(0,0,0)";
 let markerWidth = 1;
 let lastEvent;
 let mouseDown = false;
+let isEraser = false;
 
 // Mode switching functionality
 drawModeToggle.addEventListener('click', () => {
@@ -219,6 +222,24 @@ socket.on('drawing message', (data) => {
     item.appendChild(img);
     
     messages.appendChild(item);
+});
+
+// Changes color of pen to white and changes width
+eraserBtn.addEventListener('click', function() {
+    if (!isEraser) {
+        marker = '#FFF'; // white for eraser
+        markerWidth = 5;
+        eraserIcon.src = 'assets/paintburhs.png';
+        eraserBtn.title = 'Switch to Paintbrush';
+        isEraser = true;
+    } else {
+        marker = '#000'; // black for paintbrush
+        markerWidth = 5;
+        eraserIcon.src = 'assets/eraser.png';
+        eraserBtn.title = 'Switch to Eraser';
+        isEraser = false;
+    }
+    document.getElementById('marker').value = markerWidth;
 });
 
 // Optional: Display connection/disconnection notifications
