@@ -53,28 +53,37 @@
     background-color: #38A3A5;
 }
 
+#container {
+    text-align: center;
+}
+
 /* Chat container styling */
 #chat-container {
-    max-width: 600px;
+    width: 600px;
     margin: 20px auto;
     border: 2px solid #5584AC;
     border-radius: 10px;
     overflow: hidden;
     background-color: #f5f5f5;
+    display: inline-block;
+    vertical-align: middle;
+    height: 400px;
 }
 
 #messages {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    height: 400px;
+    height: 350px;
     overflow-y: auto;
     scroll-behavior: smooth;
+    text-align: left;
 }
 
 #messages li {
     padding: 10px 15px;
     font-family: nintendoFont;
+    text-align: left;
 }
 
 #messages li:nth-child(odd) {
@@ -125,6 +134,7 @@
     border-radius: 5px;
     font-family: nintendoFont;
     font-size: 16px;
+    text-align: left;
 }
 
 #form button {
@@ -147,6 +157,40 @@
     background: #e0e8f0;
     border-radius: 10px; 
 }*/
+
+#input-container {
+    width: 600px;
+    margin: 20px auto;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    display: inline-block;
+    vertical-align: middle;
+    height: 400px;
+}
+
+#keyboard-container {   
+    position: absolute;
+    left: 0;
+    right: 50px;
+    display: none;
+}
+
+.drawing-section {
+    position: absolute;
+    left: 0;
+    right: 50px;
+    display: none;
+}
+
+#mode-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 10px;
+    max-width: 600px;
+}
 
 #keyboard-container {
     max-width: 520px;
@@ -320,12 +364,6 @@
 }
 
 /* Mode toggle styles */
-#mode-toggle {
-    text-align: center;
-    margin: 10px auto;
-    max-width: 600px;
-}
-
 #draw-mode-toggle {
     width: 30px;
     height: 30px;
@@ -345,22 +383,7 @@
     background: #5584AC;
 }
 
-/* Input container (keyboard + toggle) */
-#input-container {
-    max-width: 600px;
-    margin: 20px auto;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-}
-
 /* Drawing section styles */
-.drawing-section {
-    max-width: 600px;
-    margin: 20px auto;
-    text-align: center;
-}
-
 .drawing-section canvas {
     border: 2px solid #5584AC;
     border-radius: 10px;
@@ -372,51 +395,6 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-}
-
-#marker-container {
-    background: #5584AC;
-    padding: 15px;
-    border-radius: 10px;
-    width: 200px;
-}
-
-#marker-container h2 {
-    color: #FFF;
-    margin: 0 0 15px;
-    font-weight: normal;
-    font-size: 1.2rem;
-    font-family: nintendoFont;
-}
-
-#clear {
-    font-family: nintendoFont;
-    font-size: 1rem;
-    background: #22577A;
-    color: #FFF;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    height: fit-content;
-}
-
-#clear:hover {
-    background: #38A3A5;
-}
-
-#shape {
-    width: 0;
-    height: 0;
-    border-left: 125px solid transparent;
-    border-right: 0px solid transparent;
-    border-bottom: 15px solid #fff;
-    margin: 5px auto;
-}
-
-#marker {
-    width: 100%;
-    margin: 10px 0;
 }
 
 .drawing-buttons {
