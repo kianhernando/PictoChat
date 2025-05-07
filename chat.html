@@ -13,6 +13,7 @@
     This project is a real-time chat application inspired by Nintendo DS's PictoChat.
     </p>
 
+<div id="container">
     <div id="chat-container">
         <ul id="messages"></ul>
         <form id="form" action="">
@@ -86,25 +87,25 @@
                 </div>
             </div>
         </div>
+        <div class="drawing-section" style="display: none;">
+            <canvas width="520" height="300" id="canvas"></canvas>
+            <div id="drawing-controls">
+                <div id="marker-container">
+                    <h2>Stroke Width</h2>
+                    <input id="marker" type="range" max="10" min="1" value="1">
+                    <div id="shape"></div>
+                </div>
+                <div class="drawing-buttons">
+                    <button id="clear">Clear Drawing</button>
+                    <button id="send-drawing">Send Drawing</button>
+                </div>
+            </div>
+        </div>
         <div id="mode-toggle">
             <img src="/assets/image.png" alt="Toggle Drawing Mode" id="draw-mode-toggle">
         </div>
     </div>
-
-    <div class="drawing-section" style="display: none;">
-        <canvas width="575" height="300" id="canvas"></canvas>
-        <div id="drawing-controls">
-            <div id="marker-container">
-                <h2>Stroke Width</h2>
-                <input id="marker" type="range" max="10" min="1" value="1">
-                <div id="shape"></div>
-            </div>
-            <div class="drawing-buttons">
-                <button id="clear">Clear Drawing</button>
-                <button id="send-drawing">Send Drawing</button>
-            </div>
-        </div>
-    </div>
+</div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
