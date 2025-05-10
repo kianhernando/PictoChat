@@ -56,19 +56,24 @@ drawModeToggle.addEventListener('click', () => {
     drawingSection.style.display = isDrawMode ? 'block' : 'none';
 });
 
-// Get username and room from localStorage (set by index.html)
-const storedUsername = localStorage.getItem('username');
-const storedRoom = localStorage.getItem('room');
+const urlParams = new URLSearchParams(window.location.search);
+username = urlParams.get('username');
+const room = urlParams.get('room');
 
-// If no stored username/room, redirect back to index
-if (!storedUsername || !storedRoom) {
+// if no username or room, go back to home page
+if (!username || !room) {
     window.location.href = '/';
 }
 
-// Set username and join room immediately
-username = storedUsername;
-currentRoom = storedRoom;
-socket.emit('joinRoom', storedRoom);
+// if username and room, allow joining room
+console.log("Joining room:", username, room);
+socket.emit('joinRoom', { username, room });
+
+// link to user's history page
+const historyLink = document.getElementById("history");
+if (historyLink) { 
+    historyLink.href = `/history.html?username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}`;
+}
 
 // Remove all room selection related elements and code
 const roomSelection = document.getElementById('room-selection');
@@ -81,6 +86,7 @@ if (startBtn) startBtn.remove();
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (input.value) {
+        console.log("SENDING MESSAGE:", input.value);
         socket.emit('message', {
             sender: username,
             message: input.value
@@ -196,14 +202,17 @@ window.addEventListener("load", function() {
 
 // Listen for chat messages from server
 socket.on('message', (data) => {
+    console.log("RECEIVED FROM SERVER:", data);
     const item = document.createElement('li');
     item.textContent = `[${data.sender}] ${data.message}`;
+    console.log("messages is:", messages);
     messages.appendChild(item);
     messages.scrollTop = messages.scrollHeight;
 });
 
 // Listen for drawing messages
 socket.on('drawing message', (data) => {
+    console.log("DRAWING RECEIVED:", data);
     const item = document.createElement('li');
     item.classList.add('drawing-message');
     
@@ -316,17 +325,19 @@ sendDrawingBtn.addEventListener('click', () => {
             return;
         }
         
-        // Convert canvas to image data and send
-        const drawingData = canvas.toDataURL('image/png');
-        socket.emit('drawing message', {
-            username: username,
-            drawing: drawingData
-        });
+        // convert image to blob (binary image data that is not encoded)
+        canvas.toBlob((blob) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const arrayBuffer = reader.result;
+                socket.emit('drawing message', arrayBuffer);    // send binary buffer
+            };
+            reader.readAsArrayBuffer(blob);
+        }, 'image/png');
         
         // Clear canvas after sending
         context.clearRect(0, 0, canvas.width, canvas.height);
     } catch (error) {
         alert('Error sending drawing. Please try again.');
-    }
-    
+    } 
 });

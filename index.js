@@ -5,8 +5,8 @@ const roomButtons = document.querySelectorAll('.room-btn');
 // Clear whenever we reload the page
 window.addEventListener('load', () => {
     usernameInput.value = '';
-    localStorage.removeItem('username');
-    localStorage.removeItem('room');
+    //localStorage.removeItem('username');
+    //localStorage.removeItem('room');
 });
 
 // Prevent joining room before first putting a username
@@ -24,11 +24,8 @@ roomButtons.forEach(btn => {
         const room = btn.dataset.room;
         
         if (username) {
-            // Get from local storage to use when we process the room
-            localStorage.setItem('username', username);
-            localStorage.setItem('room', room);
             // Redirect to chat page
-            window.location.href = '/chat.html';
+            window.location.href = `/chat.html?username=${encodeURIComponent(username)}&room=${encodeURIComponent(room)}`;
         }
     });
 }); 
