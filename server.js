@@ -18,6 +18,34 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+// route to message history
+app.get('/api/history', async (req, res) => {
+  // use only username to get messages from every room they were in
+  const { username } = req.query;
+
+  if (!username) {
+    return res.status(400).send("Missing username");
+  }
+
+  try {
+    // query messages sent by user across all rooms
+    const [rows] = await db.query(`
+      select m.payload, m.type, m.created_on, r.name as room
+      from messages m
+      join users u on m.user_id = u.id
+      join rooms r on m.room_id = r.id
+      where u.username = ?
+      and m.created_on >= now() - interval 48 hour
+      order by m.created_on desc
+    `, [username]);
+
+    res.json(rows);
+  } catch(err) {
+    console.error("/api/history error:", err);
+    res.status(500).send("Server error");
+  }
+});
+
 // Socket.io connection handling
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -30,7 +58,7 @@ io.on('connection', (socket) => {
     }
     
     try {
-      // insert user if not already present
+      // insert user into db if not already in there
       await db.query(`insert ignore into users (username) values (?)`, [username]);
       const [[userRow]] = await db.query(`select id from users where username = ?`, [username]);
       const [[roomRow]] = await db.query(`select id from rooms where name = ?`, [room]);
@@ -40,7 +68,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      // save to socket
+      // save user info to socket
       socket.user_id = userRow.id;
       socket.room_id = roomRow.id;
       socket.username = username;
@@ -67,7 +95,7 @@ io.on('connection', (socket) => {
       try{
         // set time to local time rather than UTC
         const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Los_Angeles'}).replace(' ', 'T');
-        // save to db
+        // save messages to db
         await db.query(
           `insert into messages (user_id, room_id, type, payload, created_on)
           values (?, ?, ?, ?, ?)`,

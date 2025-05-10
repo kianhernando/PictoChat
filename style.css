@@ -509,3 +509,20 @@
     display: flex;
     justify-content: center;
 }
+
+#history-list li {
+    margin-bottom: 16px;
+    font-family: nintendoFont;
+    font-size: 20px;
+}
+
+#history-list img {
+    margin-top: 8px;
+    border: 1px solid #5584AC;
+}
+
+#empty-message {
+    font-family: nintendoFont;
+    font-size: 20px;
+    text-align: center;
+}
