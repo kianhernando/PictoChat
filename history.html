@@ -8,8 +8,32 @@
 </head>
 <body>
     <h1 id="history-title">My History</h1>
-    <p><a id="back-link" href="#">🡐Back to Chat</a></p>
-    <p id="empty-message" style="display: none;">No messages within the last 48 hours ｡°(°.◜ᯅ◝°)°｡</p>
+    <p><a id="back-link" href="#">Back to Chat ✎ᝰ.</a></p>
+    <div id="status">
+        <p id="empty-message" class="message-status" style="display: none;">
+            No messages within the last 48 hours ｡°(°.◜ᯅ◝°)°｡
+        </p>
+        <p id="message-found" class="message-status" style="display: none;">
+            I found your messages within the last 48 hours! ◝(ᵔᗜᵔ)◜
+        </p>
+    </div>
+    <!--make drop down to filter messages based on room and type-->
+    <div id="filters">
+        <label for="roomFilter">Filter by Room:</label>
+        <select id="roomFilter">
+            <option value="all">All Rooms</option>
+            <option value="A">Room A</option>
+            <option value="B">Room B</option>
+            <option value="C">Room C</option>
+            <option value="D">Room D</option>
+        </select>
+        <label for="typeFilter">Filter by Message Type:</label>
+        <select id="typeFilter">
+            <option value="all">All Types</option>
+            <option value="1">Text</option>
+            <option value="2">Drawing</option>
+        </select>
+    </div>
     <ul id="history-list"></ul>
 
     <script src="history.js"></script>

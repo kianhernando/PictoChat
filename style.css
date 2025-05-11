@@ -57,10 +57,19 @@
     text-align: center;
 }
 
+#back-link-main {
+    font-family: nintendoFont;
+    display: flex;
+    justify-content: center;    
+    font-size: 18px;
+    margin-bottom: 14px;
+}
+
 #history {
     font-family: nintendoFont;
     display: flex;
     justify-content: center;    
+    font-size: 18px;
 }
 
 /* Chat container styling */
@@ -500,6 +509,7 @@
     font-family: nintendoFont;
     display: flex;
     justify-content: center;
+    font-size: 18px;
 }
 
 #history-title {
@@ -523,6 +533,41 @@
 
 #empty-message {
     font-family: nintendoFont;
-    font-size: 20px;
+    font-size: 24px;
     text-align: center;
+}
+
+#message-found {
+    font-family: nintendoFont;
+    font-size: 24px;
+    text-align: center;
+}
+
+.message-status {
+    min-height: 15px;
+    margin-bottom: 16px;
+}
+
+/*container to align filters */
+#filters {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#filters label {
+    font-family: nintendoFont;
+    margin-right: 2px;
+    font-size: 18px;
+}
+
+#filters select {
+    font-family: nintendoFont;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background-color: #5584AC;
+    color: white;
+    font-size: 16px;
 }
