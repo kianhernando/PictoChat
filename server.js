@@ -19,6 +19,7 @@ app.get('/', (req, res) => {
 });
 
 // route to message history
+// GET request from the frontend
 app.get('/api/history', async (req, res) => {
   // use only username to get messages from every room they were in
   const { username } = req.query;
@@ -39,7 +40,7 @@ app.get('/api/history', async (req, res) => {
       order by m.created_on desc
     `, [username]);
 
-    res.json(rows);
+    res.json(rows);   // send data to frontend
   } catch(err) {
     console.error("/api/history error:", err);
     res.status(500).send("Server error");
@@ -92,7 +93,7 @@ io.on('connection', (socket) => {
         message: data.message
       });
 
-      try{
+      try {
         // set time to local time rather than UTC
         const now = new Date().toLocaleString('sv-SE', { timeZone: 'America/Los_Angeles'}).replace(' ', 'T');
         // save messages to db

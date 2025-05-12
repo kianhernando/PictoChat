@@ -91,6 +91,7 @@ const emptyMessage = document.getElementById("empty-message");
 const foundMessage = document.getElementById("message-found");
 
 // fetch message history for user (any room within the past 48 hours)
+// rest api endpoint at /api/history
 fetch(`/api/history?username=${encodeURIComponent(username)}`)
     .then(res => res.json())
     .then(data => {
@@ -114,39 +115,3 @@ fetch(`/api/history?username=${encodeURIComponent(username)}`)
             list.innerHTML = `<li>Error loading history: ${err.message}</li>`;
         }
     });
-    //     if(foundMessage) foundMessage.style.display = "block";
-    //     // if no messages have been sent, show "no messages"
-    //     if (!Array.isArray(data)|| data.length === 0) {
-    //         if (emptyMessage) emptyMessage.style.display = "block";
-    //         return;
-    //     }
-
-    //     if(foundMessage) foundMessage.style.display = "block";
-
-    //     data.forEach(msg => {
-    //         const item = document.createElement("li");
-
-    //         // change time from 24hr format to 12hr format
-    //         const localTime = formatTo12Hour(msg.created_on);
-
-    //         // get room name
-    //         const roomName = msg.room || "Unknown";
-
-    //         // check if drawing message type
-    //         if (msg.type === 2) {
-    //             const label = document.createElement("div");
-    //             label.textContent = `${localTime}, Room ${roomName} | Drawing:`;
-    //             item.appendChild(label);
-
-    //             const img = document.createElement("img");
-    //             img.src = msg.payload;  // get image url from database
-    //             img.style.maxWidth = "200px";
-    //             item.appendChild(img);
-    //         } else {
-    //             // text message type
-    //             item.textContent = `${localTime}, Room ${roomName} : ${msg.payload}`;
-    //         }
-
-    //         list.appendChild(item);
-    //     });
-    // })
