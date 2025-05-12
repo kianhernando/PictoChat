@@ -117,9 +117,9 @@ io.on('connection', (socket) => {
       try {
         const fileName = `drawing_${Date.now()}_${Math.floor(Math.random() * 1000)}.png`;
         const filePath = path.join(__dirname, 'drawings', fileName);
-        const publicUrl = `/drawings/${fileName}`;
+        const publicUrl = `/drawings/${fileName}`;    // create url to drawing
 
-        // save binary buffer to file
+        // save image as a png
         fs.writeFileSync(filePath, Buffer.from(buffer));  // write binary image
 
         // emit to others in the room
