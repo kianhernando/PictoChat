@@ -50,6 +50,7 @@ function renderMessages(messages) {
             const img = document.createElement("img");
             img.src = msg.payload;  // get image url from database
             img.style.maxWidth = "400px";
+            img.style.backgroundColor = "white";
             item.appendChild(img);
         } else {
             // text message type
